@@ -56,12 +56,17 @@ int* getRandomGrid(int width, int height) {
 }
 
 void drawGrid(int* grid, int width, int height) {
+    // added space for newline characters and null char at end
+    int j = 0;
+    char drawString[(width + 1) * height + 1];
     for (int i = 0; i < width * height; ++i) {
-        putchar(*(grid + i) ? WHITE : BLACK);
+        drawString[j++] = *(grid + i) ? WHITE : BLACK;
         if ((i + 1) % width == 0) {
-            putchar('\n');
+            drawString[j++] = '\n';
         }
     }
+    drawString[j] = '\0';
+    puts(drawString);
 }
 
 // windows 10 doesn't support ansi escape codes :(. Can't move upwards and edit previous lines in stdout.
