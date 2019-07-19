@@ -38,7 +38,7 @@ int main(int argc, char **argv)
                 free(grid);
             }
             grid = getRandomGrid(width, height);
-            drawGrid(grid, width, height);
+            drawGrid(grid, width, height, 0);
         } else if (startsWith(LOAD, input)) {
             char* file = input + strLength(LOAD) + 1;
             setFileStrTerminator(file);
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
             int status = readSaveFile(file, &width, &height, &grid);
             if (status) {
                 printf("Loaded %d by %d grid:\n", width, height);
-                drawGrid(grid, width, height);
+                drawGrid(grid, width, height, 0);
             } else {
                 puts("Error loading file. Check the path.");
             }
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
                 free(grid);
             }
             grid = (int*)calloc(width * height, sizeof(int));
-            drawGrid(grid, width, height);
+            drawGrid(grid, width, height, 0);
         } else if (startsWith(TOGGLE, input)) {
             if (grid) {
                 int x;
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
                     continue;
                 }
                 *(grid + x + y * width) = !*(grid + x + y * width);
-                drawGrid(grid, width, height);
+                drawGrid(grid, width, height, 0);
             } else {
                 puts("No grid is loaded to be written!");
             }
@@ -94,16 +94,16 @@ int main(int argc, char **argv)
                 int* newGrid = getUpdatedGrid(grid, width, height);
                 free(grid);
                 grid = newGrid;
-                drawGrid(grid, width, height);
+                drawGrid(grid, width, height, 0);
             } else {
                 puts("No grid is available to update!");
             }
         } else if (startsWith(PLAY, input)) {
             if (grid) {
-                int countLen;
-                // +1 for space
-                int count = numFromString(input + strLength(PLAY) + 1, &countLen);
-                int delay = numFromString(input + strLength(PLAY) + 2 + countLen, NULL);
+                int count;
+                int delay;
+                int* params[] = {&count, &delay};
+                parseParams(input + strLength(PLAY) + 1, params, 2);
                 if (count < 0 || delay < 0) {
                     puts("Count and delay must be greater than 0.");
                     continue;
@@ -112,8 +112,8 @@ int main(int argc, char **argv)
                     int* newGrid = getUpdatedGrid(grid, width, height);
                     free(grid);
                     grid = newGrid;
-                    drawGrid(grid, width, height);
-                    putchar('\n');
+                    drawGrid(grid, width, height, 1);
+//                    putchar('\n');
                     Sleep(delay);
                 }
             } else {
