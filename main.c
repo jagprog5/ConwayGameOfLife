@@ -104,16 +104,12 @@ int main(int argc, char **argv)
                 int delay;
                 int* params[] = {&count, &delay};
                 parseParams(input + strLength(PLAY) + 1, params, 2);
-                if (count < 0 || delay < 0) {
-                    puts("Count and delay must be greater than 0.");
-                    continue;
-                }
-                for (int i = 0; i < count; ++i) {
+                // kbhit() is non zero if a key is waiting in the stdin buffer
+                for (int i = 0; (i < count || count == -1) && !kbhit(); ++i) {
                     int* newGrid = getUpdatedGrid(grid, width, height);
                     free(grid);
                     grid = newGrid;
                     drawGrid(grid, width, height, 1);
-//                    putchar('\n');
                     Sleep(delay);
                 }
             } else {
@@ -128,7 +124,8 @@ int main(int argc, char **argv)
             puts("load [file path]; loads a grid that was saved with write");
             puts("escape; exits the program");
             puts("next; updates the grid");
-            puts("play [count] [millisdelay]; repeatedly updates the grid, with a millisecond delay, and a certain # of frames. Interrupt by pressing any key.");
+            puts("play [count] [millisdelay]; repeatedly updates the grid, with a millisecond delay, and a certain # of frames.");
+            puts("\t\t\t\tinterrupt by pressing any key. Use a count of -1 to last forever.");
         }
     }
 	return 0;
