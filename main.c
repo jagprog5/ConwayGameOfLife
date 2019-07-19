@@ -104,6 +104,10 @@ int main(int argc, char **argv)
                 int delay;
                 int* params[] = {&count, &delay};
                 parseParams(input + strLength(PLAY) + 1, params, 2);
+                if (delay < 1) {
+                    puts("Delay must be greater than 0");
+                    continue;
+                }
                 // kbhit() is non zero if a key is waiting in the stdin buffer
                 for (int i = 0; (i < count || count == -1) && !kbhit(); ++i) {
                     int* newGrid = getUpdatedGrid(grid, width, height);
